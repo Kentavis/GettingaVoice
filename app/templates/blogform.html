@@ -7,20 +7,21 @@
 <img src="/static/CloudsPNG.png" class="rounded float-end" width = "200" hieght= "200" alt="...">
 
 <img src="/static/CloudsPNG.png" class="rounded float-start" width = "200" hieght= "200" alt="...">    </div>
-        <h1></h1>
+        <h1>Add a Question!</h1>
 
+        <div class="text-center">
+
+        
         <form method=post>
             {{ form.hidden_tag() }}
-
             <p>
-                Comments here <br>
-                {{ form.content(cols=64, rows=10) }}
+                {{ form.subject.label }} <br>
+                {{ form.subject(size=64) }}
                 <!--List the errors for this field-->
-                {% for error in form.content.errors %}
+                {% for error in form.subject.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
-
              <p>
                 <img src="/static/CloudsPNG.png" class="rounded float-end" width = "200" hieght= "200" alt="...">
                 <img src="/static/CloudsPNG.png" class="rounded float-start" width = "200" hieght= "200" alt="...">    </div>
@@ -41,5 +42,6 @@
                 {{form.submit()}}
             </p>
         </form>
+    </div>
        
 {% endblock %}

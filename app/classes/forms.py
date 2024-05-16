@@ -14,6 +14,7 @@ class ProfileForm(FlaskForm):
     lname = StringField('Last Name', validators=[DataRequired()]) 
     image = FileField("Image") 
     submit = SubmitField('Post')
+    role = SelectField('Role',choices=[("Teacher","Teacher"),("Student","Student")])
 
 class ConsentForm(FlaskForm):
     adult_fname = StringField('First Name',validators=[DataRequired()])
@@ -33,14 +34,12 @@ class SleepForm(FlaskForm):
     submit = SubmitField("Submit")
 
 class BlogForm(FlaskForm):
-    subject = StringField('Subject', validators=[DataRequired()])
-    content = TextAreaField('Blog', validators=[DataRequired()])
-    tag = StringField('Tag', validators=[DataRequired()])
-    submit = SubmitField('Blog')
+    subject = StringField('question', validators=[DataRequired()])
+    submit = SubmitField('Submit question')
 
 class CommentForm(FlaskForm):
-    content = TextAreaField('Comment', validators=[DataRequired()])
-    submit = SubmitField('Comment')
+    content = TextAreaField('answer', validators=[DataRequired()])
+    submit = SubmitField('Submit answer')
 
 class ClinicForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])

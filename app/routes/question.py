@@ -12,8 +12,8 @@ from flask_login import login_required
 import datetime as dt
 
 # This is the route to list all blogs
-@app.route('/question/list')
-@app.route('/questions')
+@app.route('/blog/list')
+@app.route('/blogs')
 # This means the user must be logged in to see this page
 @login_required
 def blogList():
@@ -30,7 +30,7 @@ def blogList():
 # can then be used in the query to retrieve that blog from the database. This route 
 # is called when the user clicks a link on bloglist.html template.
 # The angle brackets (<>) indicate a variable. 
-@app.route('/question/<blogID>')
+@app.route('/blog/<blogID>')
 # This route will only run if the user is logged in.
 @login_required
 def blog(blogID):
@@ -49,7 +49,7 @@ def blog(blogID):
 # <blogID> is a variable sent to this route by the user who clicked on the trash can in the 
 # template 'blog.html'. 
 # TODO add the ability for an administrator to delete blogs. 
-@app.route('/question/delete/<blogID>')
+@app.route('/blog/delete/<blogID>')
 # Only run this route if the user is logged in.
 @login_required
 def blogDelete(blogID):
@@ -61,10 +61,10 @@ def blogDelete(blogID):
         # delete the blog using the delete() method from Mongoengine
         deleteBlog.delete()
         # send a message to the user that the blog was deleted.
-        flash('The Question was deleted.')
+        flash('The Blog was deleted.')
     else:
         # if the user is not the author tell them they were denied.
-        flash("You can't delete a question you don't own.")
+        flash("You can't delete a blog you don't own.")
     # Retrieve all of the remaining blogs so that they can be listed.
     blogs = Blog.objects()  
     # Send the user to the list of remaining blogs.
@@ -77,7 +77,7 @@ def blogDelete(blogID):
 # is True and this route creates the new blog based on what the user put in the form.
 # Because this route includes a form that both gets and blogs data it needs the 'methods'
 # in the route decorator.
-@app.route('/question/new', methods=['GET', 'POST'])
+@app.route('/blog/new', methods=['GET', 'POST'])
 # This means the user must be logged in to see this page
 @login_required
 # This is a function that is run when the user requests this route.
@@ -96,6 +96,8 @@ def blogNew():
             # the left side is the name of the field from the data table
             # the right side is the data the user entered which is held in the form object.
             subject = form.subject.data,
+            content = form.content.data,
+            tag = form.tag.data,
             author = current_user.id,
             # This sets the modifydate to the current datetime.
             modify_date = dt.datetime.utcnow
@@ -122,7 +124,7 @@ def blogNew():
 # blog except you don't give the user a blank form.  You have to present the user with a form
 # that includes all the values of the original blog. Read and understand the new blog route 
 # before this one. 
-@app.route('/question/edit/<blogID>', methods=['GET', 'POST'])
+@app.route('/blog/edit/<blogID>', methods=['GET', 'POST'])
 @login_required
 def blogEdit(blogID):
     editBlog = Blog.objects.get(id=blogID)
@@ -139,6 +141,8 @@ def blogEdit(blogID):
         # update() is mongoengine method for updating an existing document with new data.
         editBlog.update(
             subject = form.subject.data,
+            content = form.content.data,
+            tag = form.tag.data,
             modify_date = dt.datetime.utcnow
         )
         # After updating the document, send the user to the updated blog using a redirect.
@@ -147,6 +151,8 @@ def blogEdit(blogID):
     # if the form has NOT been submitted then take the data from the editBlog object
     # and place it in the form object so it will be displayed to the user on the template.
     form.subject.data = editBlog.subject
+    form.content.data = editBlog.content
+    form.tag.data = editBlog.tag
 
 
     # Send the user to the blog form that is now filled out with the current information
@@ -182,7 +188,7 @@ def commentEdit(commentID):
     editComment = Comment.objects.get(id=commentID)
     if current_user != editComment.author:
         flash("You can't edit a comment you didn't write.")
-        return redirect(url_for('question',blogID=editComment.blog.id))
+        return redirect(url_for('blog',blogID=editComment.blog.id))
     blog = Blog.objects.get(id=editComment.blog.id)
     form = CommentForm()
     if form.validate_on_submit():
